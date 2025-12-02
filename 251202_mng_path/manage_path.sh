@@ -57,8 +57,8 @@ if [[ "$ACTION" == "add" ]]; then
         # Already exists, do nothing or just keep same
         NEW_PATH="$CURRENT_PATH"
     else
-        # Append to PATH
-        NEW_PATH="$CURRENT_PATH:$DIR"
+        # Prepend to PATH
+        NEW_PATH="$DIR:$CURRENT_PATH"
     fi
 elif [[ "$ACTION" == "remove" ]]; then
     # Remove directory from PATH
