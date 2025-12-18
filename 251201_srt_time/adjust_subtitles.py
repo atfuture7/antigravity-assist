@@ -71,38 +71,27 @@ def get_user_input():
     pivot_time = parse_time(pivot_str)
     
     print("Select mode:")
-    print("1. Extend (Shift Backward/Later)")
+    print("1. Extend (Shift Timeline)")
     print("2. Reduce (Shift Forward/Earlier)")
     mode_choice = input("Enter choice (1 or 2): ").strip()
     
     mode = 'extend' if mode_choice == '1' else 'reduce'
     
-    shift_amount = None
+    target_time = None
     source_time = None
     
     if mode == 'extend':
-        shift_str = input("Enter shift amount (seconds, e.g., 2.5): ").strip()
-        shift_amount = timedelta(seconds=float(shift_str))
+        target_str = input("Enter the Target Time (HH:MM:SS,mmm): ").strip()
+        target_time = parse_time(target_str)
     elif mode == 'reduce':
         source_str = input("Enter the time to move (HH:MM:SS,mmm): ").strip()
         source_time = parse_time(source_str)
         
-    return filename, pivot_time, mode, shift_amount, source_time
+    return filename, pivot_time, mode, target_time, source_time
 
-def adjust_subtitles(filename, pivot_time, mode, shift_amount=None, source_time=None):
+def adjust_subtitles(filename, pivot_time, mode, target_time=None, source_time=None):
     blocks = parse_srt(filename)
     
-    # Find target block: first block where start > pivot_time
-    target_index = -1
-    for i, block in enumerate(blocks):
-        if block['start'] > pivot_time:
-            target_index = i
-            break
-            
-    if target_index == -1:
-        print("No subtitle block found after the specified pivot time.")
-        return
-
     if mode == 'reduce':
         if source_time is None:
             print("Error: source_time is required for reduce mode.")
@@ -161,13 +150,50 @@ def adjust_subtitles(filename, pivot_time, mode, shift_amount=None, source_time=
         blocks = final_blocks
 
     elif mode == 'extend':
-        # Shift Target and subsequent by +shift_amount
-        print(f"Target block found at {format_time(blocks[target_index]['start'])}. Shifting by +{shift_amount.total_seconds()}s.")
+        if target_time is None:
+            print("Error: target_time is required for extend mode.")
+            return
+
+        # 1. Pivot Time Normalization
+        normalized_pivot = None
+        anchor_index = -1
         
-        for i in range(target_index, len(blocks)):
+        # Scenario A: Check if Pivot inside a subtitle
+        for i, block in enumerate(blocks):
+            if block['start'] <= pivot_time <= block['end']:
+                normalized_pivot = block['start']
+                anchor_index = i
+                print(f"Pivot Time {format_time(pivot_time)} falls within subtitle {block['index']}. Snapping to Start Time: {format_time(normalized_pivot)}")
+                break
+        
+        # Scenario B: Pivot in gap (or before first block)
+        if normalized_pivot is None:
+            for i, block in enumerate(blocks):
+                if block['start'] > pivot_time:
+                    normalized_pivot = block['start']
+                    anchor_index = i
+                    print(f"Pivot Time {format_time(pivot_time)} falls in a gap. Snapping to next subtitle {block['index']} Start Time: {format_time(normalized_pivot)}")
+                    break
+        
+        if anchor_index == -1:
+            print("No suitable subtitle found after the pivot time to extend/shift.")
+            return
+
+        # 2. Calculate Offset
+        # Target Time is where we want the Anchor Block to start.
+        # Current Start is normalized_pivot.
+        # Shift = Target Time - Normalized Pivot
+        # If Target is LATER (Extend), Shift > 0. If EARLIER, Shift < 0.
+        shift_amount = target_time - normalized_pivot
+        
+        print(f"shifting timeline by {shift_amount.total_seconds()}s (Target: {format_time(target_time)})")
+
+        # 3. Ripple Effect
+        # Apply shift to anchor block and all subsequent blocks
+        for i in range(anchor_index, len(blocks)):
             blocks[i]['start'] += shift_amount
             blocks[i]['end'] += shift_amount
-            
+
     # Save
     out_filename = filename.replace('.srt', '_adjusted.srt')
     if out_filename == filename:
@@ -179,21 +205,21 @@ def adjust_subtitles(filename, pivot_time, mode, shift_amount=None, source_time=
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         # Argument mode for testing/automation
-        # python adjust_subtitles.py filename pivot_time mode [shift_amount]
+        # python adjust_subtitles.py filename pivot_time mode [target_time/source_time]
         fname = sys.argv[1]
         pivot = parse_time(sys.argv[2])
         mode = sys.argv[3]
-        shift = None
-        source_time = None
+        target = None
+        source = None
         if mode == 'extend':
-            shift = timedelta(seconds=float(sys.argv[4]))
+            target = parse_time(sys.argv[4])
         elif mode == 'reduce':
-            source_time = parse_time(sys.argv[4])
-        adjust_subtitles(fname, pivot, mode, shift, source_time)
+            source = parse_time(sys.argv[4])
+        adjust_subtitles(fname, pivot, mode, target, source)
     else:
         # Interactive mode
         try:
-            f, p, m, s, src = get_user_input()
-            adjust_subtitles(f, p, m, s, src)
+            f, p, m, t, s = get_user_input()
+            adjust_subtitles(f, p, m, t, s)
         except Exception as e:
             print(f"Error: {e}")

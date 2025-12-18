@@ -4,17 +4,26 @@ def split_sentences(text):
     """
     Splits text into sentences using regex.
     Handles common punctuation marks like ., !, ?
+    Treats newlines as sentence delimiters.
     """
-    # Replace newlines with spaces to treat the text as a continuous stream
-    text = text.replace('\n', ' ')
+    # Split by newlines first to treat them as hard boundaries
+    lines = text.split('\n')
     
-    # Split by punctuation followed by space or end of string
-    # This regex looks for (. or ! or ?) followed by a space or end of string
-    # We keep the punctuation with the sentence
-    sentences = re.split(r'(?<=[.!?])\s+', text)
-    
-    # Filter out empty strings and strip whitespace
-    return [s.strip() for s in sentences if s.strip()]
+    final_sentences = []
+    for line in lines:
+        if not line.strip():
+            continue
+            
+        # Split by punctuation followed by space or end of string
+        # This regex looks for (. or ! or ?) followed by a space or end of string
+        # We keep the punctuation with the sentence
+        parts = re.split(r'(?<=[.!?])\s+', line)
+        for part in parts:
+            clean_part = part.strip()
+            if clean_part:
+                final_sentences.append(clean_part)
+                
+    return final_sentences
 
 def split_subtitle(text, max_chars, duration):
     """
