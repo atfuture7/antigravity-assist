@@ -1,0 +1,384 @@
+/* Global Styles & Reset */
+:root {
+    --bg-color: #0d0e12;
+    --surface-color-1: #16181d;
+    --surface-color-2: #1e2128;
+    --surface-color-3: #2a2e37;
+    --primary-color: #6c5ce7;
+    --primary-hover: #5b4cc4;
+    --danger-color: #e84118;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --border-color: #333642;
+    --success-color: #00b894;
+    --canvas-bg: #121212;
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* App Container - The "Window" */
+.app-container {
+    width: 100%;
+    max-width: 500px;
+    /* Constrain width to mimic phone/vertical layout */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-color-1);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* 1. Drawing Area (Top, Largest ~50%) */
+.drawing-area {
+    flex: 5;
+    background-color: var(--canvas-bg);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border-color);
+    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    cursor: default;
+    user-select: none;
+}
+
+/* Created Elements on Canvas */
+.canvas-element {
+    position: absolute;
+    box-sizing: border-box;
+    cursor: grab;
+}
+
+.canvas-element.moving {
+    cursor: grabbing;
+    opacity: 0.8;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    /* On top while moving */
+}
+
+.canvas-element.button-element {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 4px;
+    /* Minimal padding */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.canvas-element.text-element {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    padding: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.canvas-element.input-element {
+    background-color: var(--surface-color-3);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+/* Selection Box (Drafting new elements) */
+.ghost-box {
+    position: absolute;
+    border: 2px solid var(--primary-color);
+    background-color: rgba(108, 92, 231, 0.2);
+    pointer-events: none;
+    z-index: 1000;
+}
+
+/* Alignment Line */
+.alignment-line {
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background-color: var(--success-color);
+    top: 0;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.alignment-line-horizontal {
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    background-color: var(--success-color);
+    left: 0;
+    pointer-events: none;
+    z-index: 999;
+}
+
+/* 2. Edit Area (New Top Section ~15%) */
+.edit-area {
+    flex: 1.5;
+    background-color: var(--surface-color-2);
+    padding: 0.8rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* 3. Component Area (Middle, ~15%) */
+.component-area {
+    flex: 1.5;
+    background-color: var(--surface-color-2);
+    padding: 0.8rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-row h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+}
+
+.file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Shared Carousel & Button Styles */
+.action-btn {
+    background-color: var(--surface-color-3);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    transition: all 0.2s;
+    min-width: 60px;
+    height: 100%;
+}
+
+.action-btn:hover:not(:disabled) {
+    background-color: var(--border-color);
+    transform: translateY(-1px);
+}
+
+.action-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.action-btn.active {
+    background-color: var(--danger-color);
+    color: white;
+    border-color: var(--danger-color);
+}
+
+/* Move button active color difference? Or same danger/highlight? Let's use Primary. */
+#btn-move.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Carousel Container */
+.carousel-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 100%;
+    overflow: hidden;
+}
+
+.nav-btn {
+    background: var(--surface-color-3);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 24px;
+    height: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: var(--border-color);
+}
+
+.nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.tools-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* Default 3 items visible */
+    gap: 0.5rem;
+    height: 100%;
+}
+
+.tool-btn {
+    background-color: var(--surface-color-1);
+    border: 2px solid var(--surface-color-3);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    background-color: var(--surface-color-3);
+}
+
+.tool-btn.active {
+    border-color: var(--primary-color);
+    background-color: rgba(108, 92, 231, 0.1);
+    color: var(--primary-color);
+}
+
+.tool-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.tool-btn .icon {
+    font-size: 1.2rem;
+}
+
+.tool-btn .label {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* 4. Input Area (Bottom, ~20%) */
+.input-area {
+    flex: 2;
+    /* 20% */
+    background-color: var(--surface-color-1);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-header h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.properties-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.placeholder-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: auto;
+}
+
+textarea {
+    width: 100%;
+    height: 100%;
+    background-color: var(--surface-color-3);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.8rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: none;
+    transition: border-color 0.2s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface-color-1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--surface-color-3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color);
+}

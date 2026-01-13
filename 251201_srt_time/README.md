@@ -1,4 +1,4 @@
-# antigravity-assist
+# Srt timeline adjustor
 
 This simple program can insert or shorten a large segment of time at a specified position in the subtitle file, and adjust the timing of all subsequent subtitles. 
 

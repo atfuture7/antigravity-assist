@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Subtitle Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: rgba(30, 41, 59, 0.7);
+            --surface-border: rgba(148, 163, 184, 0.1);
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+            --transition-speed: 0.2s;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Glassmorphism Container */
+        #ui-container {
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            background: var(--surface-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--surface-border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: grid;
+            grid-template-areas:
+                "header header"
+                "waveform waveform"
+                "controls controls"
+                "subtitle subtitle";
+            grid-template-rows: auto 1fr auto auto;
+            gap: 20px;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        /* Header / Time Display */
+        .header-area {
+            grid-area: header;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--surface-border);
+        }
+
+        #el-1765425574137-0 {
+            /* Time Display */
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            text-shadow: var(--accent-glow);
+            letter-spacing: -1px;
+        }
+
+        /* Waveform Area */
+        #el-1765425574137-1 {
+            /* Waveform */
+            grid-area: waveform;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 16px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--surface-border);
+        }
+
+        /* Placeholder visualization for waveform */
+        #el-1765425574137-1::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+            box-shadow: var(--accent-glow);
+            transform: translateY(-50%);
+        }
+
+        /* Controls Area */
+        .controls-area {
+            grid-area: controls;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 10px 0;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--surface-border);
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: var(--accent-glow);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Primary Action Buttons */
+        #el-1765425574137-3 {
+            /* Play */
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        #el-1765425574137-3:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Subtitle Area */
+        .subtitle-area {
+            grid-area: subtitle;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--surface-border);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .subtitle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subtitle-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #el-1765425574137-7 {
+            /* Label */
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #el-1765425574137-9 {
+            /* Input Number */
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--surface-border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            width: 60px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            transition: border-color var(--transition-speed);
+        }
+
+        #el-1765425574137-9:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: var(--accent-glow);
+        }
+
+        /* Hide number spinner arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        #el-1765425574137-8 {
+            /* Subtitle Text Display */
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            background: transparent;
+            border: none;
+            resize: none;
+            width: 100%;
+            text-align: center;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="ui-container">
+
+        <!-- Header -->
+        <div class="header-area">
+            <div id="el-1765425574137-0">00:00.00</div>
+        </div>
+
+        <!-- Waveform -->
+        <div id="el-1765425574137-1">
+            <canvas id="waveform-canvas"></canvas>
+        </div>
+
+        <!-- Transport Controls -->
+        <div class="controls-area">
+            <button id="el-1765425574137-2" onclick="loadProject()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Load File
+            </button>
+
+            <button id="el-1765425574137-10" onclick="prevSub()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+                Prev
+            </button>
+
+            <button id="el-1765425574137-3" onclick="play()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Play
+            </button>
+            <button id="el-1765425574137-4" onclick="pause()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                    <rect x="6" y="4" width="4" height="16" />
+                    <rect x="14" y="4" width="4" height="16" />
+                </svg>
+                Pause
+            </button>
+
+            <button id="el-1765425574137-6" onclick="nextSub()">
+                Next
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14" />
+                    <polyline points="12 5 19 12 12 19" />
+                </svg>
+            </button>
+
+            <button id="el-1765425574137-5" onclick="saveSubtitles()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                </svg>
+                Save
+            </button>
+        </div>
+
+        <!-- Subtitle Section -->
+        <div class="subtitle-area">
+            <div class="subtitle-header">
+                <div class="subtitle-nav">
+                    <div id="el-1765425574137-7">Subtitle No.</div>
+                    <input type="number" id="el-1765425574137-9" value="1" min="1">
+                </div>
+            </div>
+
+            <div id="el-1765425574137-8" contenteditable="true">
+                Start by loading an audio file and subtitle to begin editing.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // State
+        let subtitles = [];
+        let waveformData = null; // List of [min, max]
+        let currentDuration = 0;
+        let currentTime = 0;
+        let isPlaying = false;
+        let lastInputSubtitle = 1;
+        let visibleDuration = 30; // seconds
+
+        // Marker State
+        let activeSubtitleIndex = -1;
+        let startMarkerTime = -1;
+        let endMarkerTime = -1;
+        let draggingMarker = null;
+
+        // Elements
+        const timeDisplay = document.getElementById('el-1765425574137-0');
+        const subInput = document.getElementById('el-1765425574137-9');
+        const subText = document.getElementById('el-1765425574137-8');
+        const canvas = document.getElementById('waveform-canvas');
+        const ctx = canvas.getContext('2d');
+        const playBtn = document.getElementById('el-1765425574137-3');
+
+        // Initialization
+        window.addEventListener('resize', resizeCanvas);
+        // We delay resize until load or first frame
+        setTimeout(resizeCanvas, 100);
+
+        function resizeCanvas() {
+            const container = document.getElementById('el-1765425574137-1');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            drawWaveform();
+        }
+
+        // Bridge Calls
+        async function loadProject() {
+            const res = await window.pywebview.api.load_file_dialog();
+            if (res.success) {
+                // Audio Data
+                waveformData = res.waveform;
+                currentDuration = res.duration;
+                currentTime = 0;
+
+                // Subtitle Data
+                subtitles = res.subtitles;
+
+                // Update UI
+                drawWaveform();
+                drawWaveform();
+                timeDisplay.textContent = formatTime(currentTime); // Reset time display
+
+                // Update text to first subtitle or placeholder
+                if (subtitles && subtitles.length > 0) {
+                    subText.innerText = subtitles[0].text;
+                    subInput.value = subtitles[0].index;
+                    lastInputSubtitle = subtitles[0].index;
+
+                    // Initialize Markers
+                    activeSubtitleIndex = subtitles[0].index;
+                    startMarkerTime = subtitles[0].start;
+                    endMarkerTime = subtitles[0].end;
+                    drawWaveform();
+                } else {
+                    subText.innerText = "No subtitles loaded.";
+                }
+            } else if (res.reason) {
+                console.log("Load cancelled: " + res.reason);
+            } else if (res.error) {
+                alert("Error loading project: " + res.error);
+            }
+        }
+
+        async function play() {
+            // Check Jump Logic
+            const requestedSubIndex = parseInt(subInput.value);
+            // User changed the number, let's jump! <-- Logic check: only if number changed or if input is valid
+            if (!isNaN(requestedSubIndex) && requestedSubIndex !== lastInputSubtitle) {
+                // Find subtitle
+                const targetSub = subtitles.find(s => s.index === requestedSubIndex);
+                if (targetSub) {
+                    await window.pywebview.api.play(targetSub.start);
+                    currentTime = targetSub.start; // Tentative update for UI responsiveness
+                    lastInputSubtitle = requestedSubIndex;
+
+                    // Update Markers
+                    activeSubtitleIndex = targetSub.index;
+                    startMarkerTime = targetSub.start;
+                    endMarkerTime = targetSub.end;
+                    subText.innerText = targetSub.text;
+                } else {
+                    await window.pywebview.api.play(currentTime);
+                }
+            } else {
+                await window.pywebview.api.play(currentTime);
+            }
+            isPlaying = true;
+            playBtn.style.color = 'var(--primary-color)';
+            loop();
+        }
+
+        async function pause() {
+            await window.pywebview.api.pause();
+            isPlaying = false;
+            playBtn.style.color = '';
+        }
+
+        async function saveSubtitles() {
+            await window.pywebview.api.save_subtitles_dialog();
+        }
+
+        // Navigation
+        function nextSub() {
+            const currIdx = parseInt(subInput.value);
+            const target = subtitles.find(s => s.index === currIdx + 1);
+            if (target) {
+                subInput.value = target.index;
+                lastInputSubtitle = target.index; // Manual nav doesn't trigger auto-jump on next play unless changed again? 
+                // Actually user requirement: "When user modifies number ... and clicks Play".
+                // If I click Next, I modified the number? Yes.
+                // But usually Next/Prev should jump immediately or just update UI?
+                // Standard: Jump immediately or at least update text.
+                // For now let's just update text.
+                subText.innerText = target.text;
+                currentTime = target.start; // Move cursor visually
+
+                // Update Markers
+                activeSubtitleIndex = target.index;
+                startMarkerTime = target.start;
+                endMarkerTime = target.end;
+
+                drawWaveform();
+            }
+        }
+
+        function prevSub() {
+            const currIdx = parseInt(subInput.value);
+            const target = subtitles.find(s => s.index === currIdx - 1);
+            if (target) {
+                subInput.value = target.index;
+                lastInputSubtitle = target.index;
+                subText.innerText = target.text;
+                currentTime = target.start;
+
+                // Update Markers
+                activeSubtitleIndex = target.index;
+                startMarkerTime = target.start;
+                endMarkerTime = target.end;
+
+                drawWaveform();
+            }
+        }
+
+        // Interaction
+        canvas.addEventListener('mousedown', onMouseDown);
+        canvas.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        subText.addEventListener('blur', onTextBlur);
+
+        async function onTextBlur(e) {
+            if (activeSubtitleIndex === -1) return;
+            const newText = e.target.innerText;
+
+            // Update local state
+            const sub = subtitles.find(s => s.index === activeSubtitleIndex);
+            if (sub) {
+                sub.text = newText;
+            }
+
+            // Sync to backend
+            await window.pywebview.api.update_subtitle_text(activeSubtitleIndex, newText);
+        }
+
+        function onMouseDown(e) {
+            if (activeSubtitleIndex === -1) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = canvas.width;
+
+            // Convert time to X
+            const halfWindow = visibleDuration / 2;
+            const startTimeWindow = currentTime - halfWindow;
+
+            function timeToX(t) {
+                return ((t - startTimeWindow) / visibleDuration) * width;
+            }
+
+            const startX = timeToX(startMarkerTime);
+            const endX = timeToX(endMarkerTime);
+
+            // Tolerance in pixels
+            const tol = 10;
+
+            if (Math.abs(x - startX) <= tol) {
+                draggingMarker = 'start';
+            } else if (Math.abs(x - endX) <= tol) {
+                draggingMarker = 'end';
+            }
+        }
+
+        function onMouseMove(e) {
+            // Hover cursor change
+            if (activeSubtitleIndex === -1 && !draggingMarker) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = canvas.width;
+            const halfWindow = visibleDuration / 2;
+            const startTimeWindow = currentTime - halfWindow;
+
+            function timeToX(t) { return ((t - startTimeWindow) / visibleDuration) * width; }
+
+            if (!draggingMarker) {
+                const startX = timeToX(startMarkerTime);
+                const endX = timeToX(endMarkerTime);
+                const tol = 10;
+
+                if (Math.abs(x - startX) <= tol || Math.abs(x - endX) <= tol) {
+                    canvas.style.cursor = 'ew-resize';
+                } else {
+                    canvas.style.cursor = 'default';
+                }
+                return;
+            }
+
+            // Dragging Logic
+            const newTime = (x / width) * visibleDuration + startTimeWindow;
+
+            if (draggingMarker === 'start') {
+                // Clamp: 0 <= start <= end
+                startMarkerTime = Math.max(0, Math.min(newTime, endMarkerTime));
+            } else if (draggingMarker === 'end') {
+                // Clamp: start <= end
+                endMarkerTime = Math.max(startMarkerTime, newTime);
+            }
+
+            drawWaveform();
+        }
+
+        async function onMouseUp(e) {
+            if (!draggingMarker) return;
+
+            // Commit changes
+            // Update local subtitle list
+            const sub = subtitles.find(s => s.index === activeSubtitleIndex);
+            if (sub) {
+                sub.start = startMarkerTime;
+                sub.end = endMarkerTime;
+                // Sync to backend
+                await window.pywebview.api.update_subtitle_timing(activeSubtitleIndex, startMarkerTime, endMarkerTime);
+            }
+
+            draggingMarker = null;
+            canvas.style.cursor = 'default';
+        }
+
+        // Loop
+        async function loop() {
+            if (!isPlaying) return;
+
+            currentTime = await window.pywebview.api.get_current_time();
+
+            // Update Time Display
+            timeDisplay.textContent = formatTime(currentTime);
+
+            // Sync Markers to Active Subtitle
+            const activeSub = subtitles.find(s => currentTime >= s.start && s.index === parseInt(subInput.value));
+            // Better logic: if we are playing, and we haven't manually selected a DIFFERENT subtitle via click...
+            // "If the audio playback time reaches a subtitle's start time... update" - original behavior.
+
+            const currentSubByTime = subtitles.find(s => currentTime >= s.start && currentTime <= s.end);
+
+            if (currentSubByTime) {
+                // If we drifted into a new subtitle, auto-switch focus
+                if (activeSubtitleIndex !== currentSubByTime.index && !draggingMarker) {
+                    activeSubtitleIndex = currentSubByTime.index;
+                    startMarkerTime = currentSubByTime.start;
+                    endMarkerTime = currentSubByTime.end;
+
+                    subText.innerText = currentSubByTime.text;
+                    subInput.value = currentSubByTime.index;
+                    lastInputSubtitle = currentSubByTime.index;
+                }
+            }
+
+            drawWaveform();
+            requestAnimationFrame(loop);
+        }
+
+        // Render
+        function drawWaveform() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerY = height / 2;
+
+            // Draw center line
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Waveform
+            if (waveformData) {
+                const halfWindow = visibleDuration / 2;
+                const startTime = currentTime - halfWindow;
+                const sampleRate = 100;
+
+                ctx.fillStyle = '#3b82f6';
+                ctx.beginPath();
+
+                const startIdx = Math.max(0, Math.floor(startTime * sampleRate));
+                const endIdx = Math.min(waveformData.length, Math.ceil((startTime + visibleDuration) * sampleRate));
+
+                for (let i = startIdx; i < endIdx; i++) {
+                    const pair = waveformData[i];
+                    if (!pair) continue;
+
+                    const time = i / sampleRate;
+                    const x = ((time - startTime) / visibleDuration) * width;
+                    const scale = (height / 2) / 32768;
+                    const yMin = centerY + pair[0] * scale;
+                    const yMax = centerY + pair[1] * scale;
+
+                    ctx.moveTo(x, yMin);
+                    ctx.lineTo(x, yMax);
+                }
+                ctx.stroke();
+            }
+
+            // Playback Head (Center Line)
+            ctx.beginPath();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.moveTo(width / 2, 0);
+            ctx.lineTo(width / 2, height);
+            ctx.stroke();
+
+            // Draw Markers
+            if (activeSubtitleIndex !== -1) {
+                const halfWindow = visibleDuration / 2;
+                const startTimeWindow = currentTime - halfWindow;
+
+                function drawMarker(time, color, label) {
+                    const x = ((time - startTimeWindow) / visibleDuration) * width;
+                    if (x >= -5 && x <= width + 5) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 2;
+                        ctx.moveTo(x, 0);
+                        ctx.lineTo(x, height);
+                        ctx.stroke();
+
+                        // Handle/Label
+                        ctx.fillStyle = color;
+                        ctx.fillText(label, x + 5, 20);
+                    }
+                }
+
+                drawMarker(startMarkerTime, '#eab308', 'START'); // Yellow-500
+                drawMarker(endMarkerTime, '#f97316', 'END');   // Orange-500
+            }
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            const ms = Math.floor((seconds % 1) * 100);
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        }
+
+        // Input restriction
+        subInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+    </script>
+</body>
+
+</html>

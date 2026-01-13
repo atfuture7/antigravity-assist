@@ -1,4 +1,4 @@
-# antigravity-assist
+# Audio srt player
 
 This project will open a long window where the user loads the audio and subtitle files. After pressing play, the subtitles will appear and advance in time. The current audio time will be displayed in the upper left corner. This program is mainly used to calibrate the synchronization of these two files.
 

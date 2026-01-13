@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Editor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Drawing Area (Top, Largest) -->
+        <div id="drawing-area" class="drawing-area">
+            <div id="canvas-content" class="canvas-content" style="width: 100%; height: 100%; transform-origin: 0 0;">
+                <!-- Elements will be created here -->
+            </div>
+        </div>
+
+        <!-- Edit Area (New Top Section) -->
+        <div class="edit-area">
+            <div class="header-row">
+                <h3>Edit</h3>
+            </div>
+            <div class="carousel-container">
+                <button id="btn-edit-left" class="nav-btn">&lt;</button>
+                <div id="edit-grid" class="tools-grid">
+                    <button id="btn-reset" class="action-btn" title="Reset View">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                            <path d="M3 3v5h5"></path>
+                        </svg>
+                        Reset
+                    </button>
+                    <button id="btn-delete" class="action-btn" title="Delete Mode">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                        </svg>
+                        Delete
+                    </button>
+                    <button id="btn-save" class="action-btn" title="Save Layout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save
+                    </button>
+                    <button id="btn-load" class="action-btn" title="Load Layout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Load
+                    </button>
+                    <button id="btn-move" class="action-btn" title="Move Element">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M8 7l4-4 4 4M16 17l-4 4-4-4M16 7l-4-4-4 4M8 17l4 4 4-4M4 12h16M12 4v16"></path>
+                        </svg>
+                        Move
+                    </button>
+                </div>
+                <button id="btn-edit-right" class="nav-btn">&gt;</button>
+            </div>
+        </div>
+
+        <!-- Component Area (Middle Row) -->
+        <div class="component-area">
+            <div class="header-row">
+                <h3>Components</h3>
+                <!-- File actions moved to Edit Area -->
+                <div class="file-actions">
+                    <!-- Hidden file input for loading remains here or moved? It's hidden so position doesn't matter much but let's keep it nearby or move to body end -->
+                    <input type="file" id="file-input" accept=".html,.css" multiple style="display: none;">
+                </div>
+            </div>
+
+            <div class="carousel-container">
+                <button id="btn-move-left" class="nav-btn">&lt;</button>
+                <div id="tools-grid" class="tools-grid">
+                    <!-- Tools injected by JS -->
+                </div>
+                <button id="btn-move-right" class="nav-btn">&gt;</button>
+            </div>
+        </div>
+
+        <!-- Condition/Input Area (Bottom Row) -->
+        <div class="input-area">
+            <div class="input-header">
+                <h3>Properties</h3>
+            </div>
+            <div id="properties-content" class="properties-content">
+                <p class="placeholder-text">Select a component to configure properties.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template for Text Input -->
+    <template id="text-input-template">
+        <label for="text-content">Content</label>
+        <textarea id="text-content" rows="4" placeholder="請在此輸入文字"></textarea>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
