@@ -5,7 +5,5 @@ I upgraded version v1 to the tkinter version. I had Antigravity reference my HTM
 Welcome to my channel https://www.youtube.com/@ATFutureDigital
 
 
-If you want to sponsor me, this is the place!! https://fnd.us/e2eXS7?ref=sh_fEcMH3 (exp.20260130)
-
 # How to start
 python main.py

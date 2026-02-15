@@ -5,7 +5,6 @@ No walkthrough file was generated for this project, so an implementation plan wa
 
 Welcome to my channel https://www.youtube.com/@ATFutureDigital
 
-If you want to sponsor me, this is the place!! https://fnd.us/e2eXS7?ref=sh_fEcMH3 (exp.20260130)
-
+ 
 # How to start
 Open html file on browser
