@@ -1,0 +1,6 @@
+pywebview
+requests
+beautifulsoup4
+nltk
+gTTS
+pygame
