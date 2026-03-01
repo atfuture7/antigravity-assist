@@ -1,0 +1,17 @@
+﻿<Window x:Class="autofill.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:autofill"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <StackPanel Margin="20">
+        <TextBlock x:Name="DisplayLabel" Text="Hello World!" FontSize="18" Margin="0,0,0,10" TextWrapping="Wrap"/>
+        
+        <TextBox x:Name="InputSlot" Margin="0,0,0,10" />
+        <Button Content="Append Text" Click="OnAppendClick" Margin="0,0,0,10" />
+        <Button Content="Clear Text" Click="OnClearClick"  Margin="0,0,0,10" />
+        <Button Content="Send to Target App" Click="OnSendToAppClick" Margin="0,5,0,0" Background="LightBlue"/>
+    </StackPanel>
+</Window>

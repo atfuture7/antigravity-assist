@@ -1,0 +1,15 @@
+﻿<Window x:Class="MyHelloWorldApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MyHelloWorldApp"
+        mc:Ignorable="d"
+        Title="My C# App" Height="250" Width="400">
+    <StackPanel Margin="20">
+        <TextBlock x:Name="DisplayLabel" Text="Hello World!" FontSize="18" Margin="0,0,0,10" TextWrapping="Wrap"/>
+        
+        <TextBox x:Name="InputSlot" Margin="0,0,0,10" />
+        <Button Content="Append Text" Click="OnAppendClick" />
+    </StackPanel>
+</Window>
