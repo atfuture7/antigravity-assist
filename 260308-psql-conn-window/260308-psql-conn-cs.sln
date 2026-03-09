@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "260308-psql-conn-cs", "260308-psql-conn-cs.csproj", "{B36F3444-2408-1CE3-D6F9-EB35BE0B2C8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B36F3444-2408-1CE3-D6F9-EB35BE0B2C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B36F3444-2408-1CE3-D6F9-EB35BE0B2C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B36F3444-2408-1CE3-D6F9-EB35BE0B2C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B36F3444-2408-1CE3-D6F9-EB35BE0B2C8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {698B0B87-66F5-4144-AD22-B3FAF60EDEF8}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,20 @@
+﻿<Window x:Class="_260308_cs_input_window.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_260308_cs_input_window"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <StackPanel Margin="20">
+        <Label Content="Showing input"/>
+        <TextBox x:Name="ShowingInputTextBox" Margin="0,0,0,10"/>
+
+        <Label Content="hidden input"/>
+        <PasswordBox x:Name="HiddenInputTextBox" Margin="0,0,0,10"/>
+
+        <Button x:Name="SubmitButton" Content="Submit" Click="SubmitButton_Click" Width="100" HorizontalAlignment="Left" Margin="0,0,0,20"/>
+
+        <TextBlock x:Name="ResultTextBlock" TextWrapping="Wrap" FontSize="14"/>
+    </StackPanel>
+</Window>

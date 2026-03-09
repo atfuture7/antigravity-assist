@@ -1,0 +1,30 @@
+﻿<Window x:Class="_260308_psql_conn_cs.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:_260308_psql_conn_cs"
+        mc:Ignorable="d"
+        Title="Postgres Connection" Height="350" Width="400">
+    <StackPanel Margin="20">
+        <TextBlock Text="Database IP:"/>
+        <TextBox x:Name="TxtIp" Text="localhost" Margin="0,0,0,10"/>
+
+        <TextBlock Text="Port:"/>
+        <TextBox x:Name="TxtPort" Text="5432" Margin="0,0,0,10"/>
+
+        <TextBlock Text="Username:"/>
+        <TextBox x:Name="TxtUser" Text="postgres" Margin="0,0,0,10"/>
+
+        <TextBlock Text="Password:"/>
+        <PasswordBox x:Name="TxtPass" Margin="0,0,0,10"/>
+
+        <TextBlock Text="SQL File:"/>
+        <DockPanel Margin="0,0,0,20">
+            <Button Content="Browse" Click="Browse_Click" DockPanel.Dock="Right" Width="60"/>
+            <TextBox x:Name="TxtFile" IsReadOnly="True"/>
+        </DockPanel>
+
+        <Button Content="Execute and Export CSV" Click="Submit_Click" Height="40" Background="#007ACC" Foreground="White"/>
+    </StackPanel>
+</Window>
