@@ -2,11 +2,11 @@ from gtts import gTTS
 from pydub import AudioSegment
 import os
 
-def generate_audio(text, output_file):
+def generate_audio(text, output_file, lang='en'):
     """
     Generates audio from text using gTTS and saves it to output_file.
     """
-    tts = gTTS(text=text, lang='en')
+    tts = gTTS(text=text, lang=lang)
     tts.save(output_file)
 
 def get_audio_duration(file_path):

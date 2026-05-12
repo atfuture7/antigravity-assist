@@ -3,3 +3,5 @@ This is the tool-V2 to generate subtitles and audio from text. It requires a tex
 
 Welcome to my channel https://www.youtube.com/@ATFutureDigital
 
+python3 main.py '/home/jia/Documents/260512-yt.md' --lang zh-TW --output_audio /home/jia/Documents/260512-yt.mp3 --out
+put_srt /home/jia/Documents/260512-yt.srt

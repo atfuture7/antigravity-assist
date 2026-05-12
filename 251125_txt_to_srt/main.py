@@ -12,6 +12,7 @@ def main():
     parser.add_argument("--output_audio", help="Path to the output audio file.", default="output.mp3")
     parser.add_argument("--output_srt", help="Path to the output SRT file.", default="output.srt")
     parser.add_argument("--max_chars", type=int, default=80, help="Maximum characters per subtitle segment.")
+    parser.add_argument("--lang", default="en", help="Language code for speech generation (default: en).")
     
     args = parser.parse_args()
     
@@ -39,7 +40,7 @@ def main():
             
             # Generate audio for the sentence
             temp_audio_path = os.path.join(temp_dir, f"sentence_{i}.mp3")
-            generate_audio(sentence, temp_audio_path)
+            generate_audio(sentence, temp_audio_path, lang=args.lang)
             audio_files.append(temp_audio_path)
             
             # Get duration
