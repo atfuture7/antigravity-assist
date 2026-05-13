@@ -37,16 +37,16 @@ class VoiceSubtitleEditor:
         main_frame.grid(row=0, column=0, sticky="nsew")
         
         # Configure columns
-        for i in range(4):
+        for i in range(5):
             main_frame.columnconfigure(i, weight=1)
 
         # --- Row 0: Time Display ---
         self.a_time = ttk.Label(main_frame, text="00:00.00", anchor="center", font=("Arial", 24))
-        self.a_time.grid(row=0, column=0, columnspan=4, sticky="ew", pady=(0, 20))
+        self.a_time.grid(row=0, column=0, columnspan=5, sticky="ew", pady=(0, 20))
 
         # --- Row 1: Waveform (Canvas) ---
         self.a_wave = WaveformWidget(main_frame, bg="#d0d0d0", highlightthickness=1, highlightbackground="gray", on_marker_change=self.update_subtitle_timing)
-        self.a_wave.grid(row=1, column=0, columnspan=4, sticky="nsew", pady=(0, 20))
+        self.a_wave.grid(row=1, column=0, columnspan=5, sticky="nsew", pady=(0, 20))
         main_frame.rowconfigure(1, weight=1)
 
         # --- Row 2: Control Buttons ---
@@ -66,7 +66,7 @@ class VoiceSubtitleEditor:
 
         # --- Row 3: Subtitle Input ---
         self.i_sub = tk.Text(main_frame, height=5, width=40, bg="#2a2e37", fg="white", insertbackground="white")
-        self.i_sub.grid(row=3, column=0, columnspan=4, sticky="ew", pady=(0, 20))
+        self.i_sub.grid(row=3, column=0, columnspan=5, sticky="ew", pady=(0, 20))
         self.i_sub.bind('<KeyRelease>', self.on_text_change)
 
         # --- Row 4: Bottom Navigation & Info ---
@@ -82,6 +82,9 @@ class VoiceSubtitleEditor:
         
         self.b_down = ttk.Button(main_frame, text="Down", command=self.next_sub)
         self.b_down.grid(row=4, column=3, sticky="ew", padx=2, ipady=5)
+
+        self.b_add = ttk.Button(main_frame, text="Add", command=self.add_sub)
+        self.b_add.grid(row=4, column=4, sticky="ew", padx=2, ipady=5)
 
     def load_file(self):
         # Load Audio
@@ -170,11 +173,13 @@ class VoiceSubtitleEditor:
             # Disable navigation
             self.b_up.config(state=tk.DISABLED)
             self.b_down.config(state=tk.DISABLED)
+            self.b_add.config(state=tk.DISABLED)
         else:
             self.b_load.config(state=tk.NORMAL)
             self.b_play.config(state=tk.NORMAL)
             self.b_save.config(state=tk.NORMAL)
             self.b_pause.config(state=tk.DISABLED)
+            self.b_add.config(state=tk.NORMAL)
             
             self.update_nav_buttons()
 
@@ -196,6 +201,37 @@ class VoiceSubtitleEditor:
         if self.current_sub_index < len(self.subs.subtitles) - 1:
             self.current_sub_index += 1
             self.update_subtitle_display()
+
+    def add_sub(self):
+        # Determine start time
+        current_playback_time = self.audio.get_current_time()
+        
+        # Check if now is within a subtitle period
+        found = self.subs.get_subtitle_at_time(current_playback_time)
+        if found:
+            start_time = found.end_time
+        else:
+            start_time = current_playback_time
+            
+        end_time = start_time + 10.0 # 10 seconds span
+        
+        # Determine insertion point
+        # If we have subtitles, insert after current. Else append.
+        if self.subs.subtitles:
+            insert_at = self.current_sub_index + 1
+        else:
+            insert_at = -1
+            
+        new_sub = self.subs.add_subtitle(start_time, end_time, text="", insert_at=insert_at)
+        
+        # Update current index to the new sub
+        if insert_at == -1:
+            self.current_sub_index = len(self.subs.subtitles) - 1
+        else:
+            self.current_sub_index = insert_at
+            
+        self.update_subtitle_display()
+        self.update_nav_buttons()
 
     def update_subtitle_timing(self, marker_type, new_time):
         if not self.subs.subtitles:

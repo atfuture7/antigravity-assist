@@ -85,3 +85,20 @@ class SubtitleManager:
         if 1 <= index <= len(self.subtitles):
             return self.subtitles[index - 1]
         return None
+
+    def reindex_subtitles(self):
+        for i, sub in enumerate(self.subtitles):
+            sub.index = i + 1
+
+    def add_subtitle(self, start_time: float, end_time: float, text: str = "", insert_at: int = -1):
+        """
+        Inserts a subtitle at the specified index (0-based list index).
+        If insert_at is -1, appends to the end.
+        """
+        new_sub = Subtitle(index=0, start_time=start_time, end_time=end_time, text=text)
+        if insert_at == -1:
+            self.subtitles.append(new_sub)
+        else:
+            self.subtitles.insert(insert_at, new_sub)
+        self.reindex_subtitles()
+        return new_sub
